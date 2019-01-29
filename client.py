@@ -1,5 +1,9 @@
 #coding: utf-8
 
+# Nom : Client.py
+# Auteur : Les p'tits gars d'la côte
+# Résumé : Client permettant de se connecter au servo moteur et à la caméra de la Raspberry Pi
+
 import socket
 import signal
 import os
@@ -23,8 +27,9 @@ class Client:
         '''Connects to Raspberry PI camera and servo sockets'''
         self.__skCamera = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__skServo = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__skCamera.connect((self.__ip, self.__portCamera))
+        #self.__skCamera.connect((self.__ip, self.__portCamera))
         self.__skServo.connect((self.__ip, self.__portServo))
+        
 
         print("Connection successfully established with %s" %(self.__ip))
 
@@ -37,10 +42,10 @@ class Client:
 
     def bougerServo(self, angle):
         '''Send a request to move servo from input angle'''
+
         request = "MOVE" + str(angle)
 
         self.__skServo.send(str.encode(request))
-
 
 
 if(__name__=="__main__"):
@@ -60,7 +65,7 @@ if(__name__=="__main__"):
         else:
             client = Client(args.i, args.cp, args.sp)
             
-            ###client.conToRaspberry()
+            client.conToRaspberry()
 
             print("Commandes disponibles :\n")
             print("HELP --> aide")
@@ -81,7 +86,10 @@ if(__name__=="__main__"):
                         angle = line[4:]
                         try:
                             iAngle = int(angle)
-                            client.bougerServo(iAngle)
+                            if(iAngle > 180 or iAngle < -180):
+                                print("Error : La valeur d'angle doit être comprise entre -180 et 180")
+                            else:
+                                client.bougerServo(iAngle)
                         except ValueError:
                             print("Error : la valeur d'angle est incorrecte")
 
