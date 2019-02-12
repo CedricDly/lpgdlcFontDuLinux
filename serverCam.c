@@ -60,11 +60,6 @@ int main(int argc , char *argv[])
     //Receive a message from client
     while( (read_size = read(client_sock , client_message , sizeof(client_message))) > 0 )
     {
-
-        printf("Message reçu : %s\n", client_message);
-
-        //First try, we send an image to the client
-        printf("let's send the picture to the client !\n");
         //Get Picture Size
         FILE *picture;
         picture = fopen("image.jpg", "r");
@@ -73,23 +68,22 @@ int main(int argc , char *argv[])
         fseek(picture, 0, SEEK_END);
         size = ftell(picture);
 
-        //Send Picture Size
-        printf("Sending Picture Size\n");
+        //First message sent to the client is the Picture Size
         write(client_sock, &size, sizeof(size));
 
+        //Return to the beginning of the picture
         fseek(picture, 0, SEEK_SET);
 
         int size_bis = 1;
-        //Send Picture as Byte Array
-        printf("Sending Picture as Byte Array\n");
         char send_buffer[size_bis];
+        //Send Picture as Byte Array
+
         while(!feof(picture)) {
+            //Reading a byte of the picture, and sending it through the socket
             fread(send_buffer, 1, sizeof(send_buffer), picture);
             write(client_sock, send_buffer, sizeof(send_buffer));
             bzero(send_buffer, sizeof(send_buffer));
-            printf("allo?\n");
         }
-        printf("Picture sent !\n");
     }
 
     if(read_size == 0)
