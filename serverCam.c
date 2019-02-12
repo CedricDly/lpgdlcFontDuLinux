@@ -4,13 +4,21 @@
     compilation : gcc -o serveurCam serverCam.c (remplacer gcc par le cross-compilateur pour le faire fonctionner depuis la Rapsberry
 */
 
-#include<stdio.h>
-#include<string.h>    
-#include<sys/socket.h>
-#include<arpa/inet.h> 
-#include<unistd.h>   
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>    
+#include <sys/socket.h>
+#include <arpa/inet.h> 
+#include <unistd.h>
+#include <signal.h>   
 
 #define PORT 8002
+
+void signals_handler(int signal_number)
+{
+    printf("\n Signal catched. Closing camera Socket.\n");
+    exit(EXIT_FAILURE);
+}
 
 
 int main(int argc , char *argv[])
@@ -18,6 +26,15 @@ int main(int argc , char *argv[])
     int socket_desc , client_sock , c , read_size;
     struct sockaddr_in server , client;
     char client_message[5 * sizeof(char)];
+
+    // signals handler
+    struct sigaction action;
+    action.sa_handler = signals_handler;
+    sigemptyset(& (action.sa_mask));
+    action.sa_flags = 0;
+    sigaction(SIGINT, & action, NULL);
+    sigaction(SIGTSTP, & action, NULL);
+    sigaction(SIGTERM, & action, NULL);
 
     //Create socket
     socket_desc = socket(AF_INET , SOCK_STREAM , 0);
@@ -60,6 +77,9 @@ int main(int argc , char *argv[])
     //Receive a message from client
     while( (read_size = read(client_sock , client_message , sizeof(client_message))) > 0 )
     {
+
+        //take a picture with the raspberry camera
+        system("./v4l2grab -d /dev/video0 -o image.jpg");
         //Get Picture Size
         FILE *picture;
         picture = fopen("image.jpg", "r");

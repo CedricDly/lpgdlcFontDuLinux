@@ -10,7 +10,19 @@ import os
 import sys
 import argparse
 import re
+import struct
+import signal
 
+def close_sockets(signal, frame):
+    client.getSkCamera.close() #closing the Camera Socket
+    client.getSkServo.close()  #closing the Servo Socket
+    print("\nSIG : {} : Terminaison.".format(signal))
+    sys.exit(0)
+
+#Gestion des signaux
+signal.signal(signal.SIGTSTP, close_sockets) #Ctrl-Z
+signal.signal(signal.SIGINT, close_sockets)  #Ctrl-C
+signal.signal(signal.SIGTERM, close_sockets) #python kill
 
 
 class Client:
@@ -27,8 +39,8 @@ class Client:
         '''Connects to Raspberry PI camera and servo sockets'''
         self.__skCamera = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__skServo = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        #self.__skCamera.connect((self.__ip, self.__portCamera))
-        self.__skServo.connect((self.__ip, self.__portServo))
+        self.__skCamera.connect((self.__ip, self.__portCamera))
+        #self.__skServo.connect((self.__ip, self.__portServo))
         
 
         print("Connection successfully established with %s" %(self.__ip))
@@ -36,9 +48,22 @@ class Client:
     def prendrePhoto(self):
         '''Send a request to capture a photo'''
         self.__skCamera.send(str.encode("PHOTO"))
-        response = self.recv(1)
+        cpt = 0
 
-        ##TO DO : Recuperer la photo (voir du cote de la rasp comment est envoyee la photo)
+        #First thing to be received is the size of the picture (format -> Bytes // DOES NOT WORK ATM)
+        sizeB = self.__skCamera.recv(4)
+        size_img = struct.unpack('<HH',sizeB)[0]
+        filename = open('received_img.jpg', 'wb')
+        
+        while True:
+            cpt = cpt + 1
+            strng = self.__skCamera.recv(1)
+            if (not strng or cpt >= size_img):
+                break
+            filename.write(strng)
+        
+        filename.close()
+        print('received !')
 
     def bougerServo(self, angle):
         '''Send a request to move servo from input angle'''
@@ -46,6 +71,16 @@ class Client:
         request = "MOVE" + str(angle)
 
         self.__skServo.send(str.encode(request))
+
+    @property
+    def getSkCamera(self):
+        return self.__skCamera
+
+    @property
+    def getSkServo(self):
+        return self.__skServo
+
+
 
 
 if(__name__=="__main__"):
@@ -56,12 +91,14 @@ if(__name__=="__main__"):
     parser.add_argument("sp",  help="Port for the Servo", type=int)
     args = parser.parse_args()
 
-    if(args.cp > 65536 or args.sp > 65536):
-        print("ERROR") ##REPLACE
+    if(args.cp > 65536 or args.sp > 65536 or args.cp < 1 or args.sp < 1 or args.cp == args.sp):
+        print("Wrong format of one of the ports")
+        sys.exit(0)
     else:
         pat = re.compile("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$")
         if(not(pat.match(args.i))):
-            print("error") ##REPLACE
+            print("Wrong format of IP Address")
+            sys.exit(0)
         else:
             client = Client(args.i, args.cp, args.sp)
             
@@ -87,7 +124,7 @@ if(__name__=="__main__"):
                         try:
                             iAngle = int(angle)
                             if(iAngle > 180 or iAngle < -180):
-                                print("Error : La valeur d'angle doit être comprise entre -180 et 180")
+                                print("Error : La valeur d'angle doit être comprise entre -90° et 90°")
                             else:
                                 client.bougerServo(iAngle)
                         except ValueError:
