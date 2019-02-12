@@ -10,7 +10,7 @@
 #include<arpa/inet.h> 
 #include<unistd.h>   
 
-#define PORT 8001
+#define PORT 8002
 
 
 int main(int argc , char *argv[])
@@ -69,21 +69,25 @@ int main(int argc , char *argv[])
         FILE *picture;
         picture = fopen("image.jpg", "r");
         int size;
-        //fseek(picture, 0, SEEK_END);
-        //size = ftell(picture);
-                                            /* these lines do not work with python client atm */
-        //Send Picture Size
-        //printf("Sending Picture Size\n");
-        //write(client_sock, &size, sizeof(size));
 
-        size = 1;
+        fseek(picture, 0, SEEK_END);
+        size = ftell(picture);
+
+        //Send Picture Size
+        printf("Sending Picture Size\n");
+        write(client_sock, &size, sizeof(size));
+
+        fseek(picture, 0, SEEK_SET);
+
+        int size_bis = 1;
         //Send Picture as Byte Array
         printf("Sending Picture as Byte Array\n");
-        char send_buffer[size];
+        char send_buffer[size_bis];
         while(!feof(picture)) {
             fread(send_buffer, 1, sizeof(send_buffer), picture);
             write(client_sock, send_buffer, sizeof(send_buffer));
             bzero(send_buffer, sizeof(send_buffer));
+            printf("allo?\n");
         }
         printf("Picture sent !\n");
     }
