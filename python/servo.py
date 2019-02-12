@@ -6,23 +6,23 @@ import time
 
 # Manufacturer data
 # Recommended frequency
-freq 		= 50
+freq = 50
 
 # Go to 0 position
-init 		= 7.5
+init = 7.5
 
 # Go to minimum position
-mini 		= 5.0
+mini = 5.0
 
 # Go to maximum position
-maxi 		= 10.0
+maxi = 10.0
 
 # Pin's number
-servoPin 	= 11
+servoPin = 11
 
 # Artificial delay between commands
 # That lets time to the servo to perform the action
-DELAY 		= 0.5
+DELAY = 0.5
 
 # Disabling warnings
 GPIO.setwarnings(False)
@@ -42,7 +42,7 @@ def angle2perc(angle):
 	"""
 	Return the percentage of the duty cycle corresponding to the required angle.
 	"""
- return ((maxi - mini) / 90) * angle + init
+	return ((maxi - mini) / 90) * angle + init
 
 def changeCycle(command):
 	"""
