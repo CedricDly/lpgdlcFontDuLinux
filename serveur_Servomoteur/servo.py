@@ -2,23 +2,27 @@
 #-*-coding: utf-8-*-
 
 import RPi.GPIO as GPIO
-import time
+import time, re
+
+# Pattern to recognize valid commands
+# MOVE
+PATTERN_MOVE = "\s*MOVE\s*(-?\d*)"
 
 # Manufacturer data
 # Recommended frequency
-freq = 50
+FREQ = 50
 
 # Go to 0 position
-init = 7.5
+INIT = 7.5
 
 # Go to minimum position
-mini = 5.0
+MINI = 5.0
 
 # Go to maximum position
-maxi = 10.0
+MAXI = 10.0
 
 # Pin's number
-servoPin = 11
+SERVO_PIN = 11
 
 # Artificial delay between commands
 # That lets time to the servo to perform the action
@@ -31,18 +35,18 @@ GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
 # Initialisation
-GPIO.setup(servoPin, GPIO.OUT)
+GPIO.setup(SERVO_PIN, GPIO.OUT)
 
 # Creating the PWM
-pwm = GPIO.PWM(servoPin, freq)
-pwm.start(init)
+pwm = GPIO.PWM(SERVO_PIN, FREQ)
+pwm.start(INIT)
 time.sleep(DELAY)
 
 def angle2perc(angle):
 	"""
 	Return the percentage of the duty cycle corresponding to the required angle.
 	"""
-	return ((maxi - mini) / 90) * angle + init
+	return ((MAXI - MINI) / 90) * angle + INIT
 
 def changeCycle(command):
 	"""
@@ -50,9 +54,18 @@ def changeCycle(command):
 	The available commands are :
 		- MOVE{Angle} (Angle can be negative).
 	"""
-	angle = float(command[4:])
-	pwm.ChangeDutyCycle(angle2perc(angle))
-	time.sleep(DELAY)
+	# Searching for the pattern in the command string
+	match = re.match(PATTERN_MOVE, command).group(1)
+
+	# If something is found, run the command
+	if match:
+		angle = float(match.group(1))
+		pwm.ChangeDutyCycle(angle2perc(angle))
+		time.sleep(DELAY)
+
+	# Else, raising an error
+	else:
+		raise InvalidServoCommand("Invalid command : '{}'".format(command))
 
 def stopPWM():
 	"""
@@ -61,5 +74,11 @@ def stopPWM():
 	# Stop sending value to output
 	pwm.stop()
 
-	# Release channel
+	# Release channels
 	GPIO.cleanup()
+
+class InvalidServoCommand(Exception):
+	"""
+	Error class to be raised when an invalid command is issued.
+	"""
+	pass

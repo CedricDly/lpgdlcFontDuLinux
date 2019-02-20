@@ -1,25 +1,17 @@
 # -*- coding: utf-8 -*-
-import socket
-import servo
-import signal
+import signal, socket, servo
 
 # Constants
 BUFFER_SIZE = 128
 PORT 		= 6667
 
-def closeSocket(signum, stack):
+def closeSocket(signum, stackframe, client, socket):
 	"""
 	Closing the server
 	"""
 	servo.stopPWM()
 	client.close()
 	socket.close()
-
-# Handling the signals
-signal.signal(signal.SIGINT, closeSocket)
-signal.signal(signal.SIGTERM, closeSocket)
-signal.signal(signal.SIGQUIT, closeSocket)
-signal.signal(signal.SIGTSTP, closeSocket)
 
 if __name__ == "__main__":
 	# Creating the socket
@@ -33,23 +25,42 @@ if __name__ == "__main__":
 
 	# Accepting the connection
 	client, address = socket.accept()
-	print "{} connected".format( address )
+	print "{} connected".format(address)
+
+	# Handling the signals
+	# Ctrl + c
+	signal.signal(signal.SIGINT, closeSocket, client, socket)
+	
+	# Ctrl + \
+	signal.signal(signal.SIGQUIT, closeSocket, client, socket)
+	
+	# Ctrl + z
+	signal.signal(signal.SIGTSTP, closeSocket, client, socket)
+
+	# Sent in the command line (ex : killall python)
+	signal.signal(signal.SIGTERM, closeSocket, client, socket)
 
 	while True:
 		# Receiving data of maximum size of BUFFER_SIZE
 		data = client.recv(BUFFER_SIZE)
 		data_string = data.decode("utf-8")
-		print "RECU : {}".format(data_string)
 
-		# Translating commands
+		# Transmitting commands
 		if data_string:
-			servo.changeCycle(data_string)
+			try:
+				servo.changeCycle(data_string)
+			
+			except InvalidServoCommand as invalid:
+				# Printing the error message.
+				# The loop is not broken by invalid commands.
+				print invalid.message
 		
 		# If no command, exit
 		elif not data_string:
-			print "EXIT"
+			print "NO COMMAND"
 			break
 
 	# Stops the server correctly
-	print "Close"
+	print "Closing ..."
 	closeSocket(client, socket, servo)
+	print "Closed"
