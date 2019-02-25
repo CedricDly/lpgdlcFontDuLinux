@@ -6,29 +6,32 @@ Membres du projet : Paul BOUQUET - Cédric DELAUNAY - Thomas LE MASSON
 
 Répertoires :
 
-- Client : contient le client python
+1. Client : contient le client python
 
-- Serveur_Caméra : contient le serveur Caméra et le binaire cross-compilé v4lgrab
+2. Serveur_Caméra : contient le serveur Caméra et le binaire cross-compilé v4lgrab
 
-- Serveur_Servo  : contient le serveur contrôlant le servo-moteur
+3. Serveur_Servo  : contient le serveur contrôlant le servo-moteur
 
-# **Démarrage rapide**
+## **Démarrage rapide**
 
 - Pour le serveur caméra, les binaires sont déjà compilés. Vous pouvez donc transférer les deux
   exécutables sur la Raspberry, et lancer le serveur Caméra (par défaut, il est en écoute sur le
   port 8002). Si vous voulez recompiler le serveur caméra, il vous suffit de copier le dossier
   ServeurCamera/ dans le docker contenant le cross-compilateur, et d'utiliser le Makefile.
 
-- Pour le serveur servo-moteur, copiez le dossier sur la Raspberry, et exécutez ... 
+- Pour le serveur servo-moteur, copiez le dossier sur la Raspberry, et exécutez
 
 - Pour le client python, lancez le simplement avec en paramètres l'ip de la raspberry, le port du
   serveur caméra et le port du serveur servo-moteur. Suivez ensuite les instructions affichées dans
   votre console.
 
+## **Client Python**
 
-# **Client Python**
+Le client Python permet de prendre des photos ou d'actionner le servomoteur à distance. 
 
-# **Serveur Python**
+Les paramètres à passer sont dans l'ordre : **l'ip de la Raspberry**, **le port du serveur camera** et **le port du serveur servomoteur**.
+
+## **Serveur Servomoteur / Python**
 
 Ce serveur permet de faire la liaison entre le client et le servomoteur.
 
@@ -46,10 +49,6 @@ le serveur (On arrête le servomoteur. Puis, on coupe la connection avec le clie
 est fermée). scoket est fermé)
 
 Si aucune commande n'est envoyée, le serveur s'arrête.
-
-# **Serveur Caméra**
-
-# **Serveur Servomoteur**
 
 On initialise le servomoteur à la position "0". C'est-à-dire, qu'il n'y pas d'angle entre la
 référence de mesure des angles et l'axe du servomoteur. [documentation
@@ -71,7 +70,7 @@ La seule commande dsiponible est **MOVE**, suivie d'un numéro qui peut être n�
 
 Le numéro représente, en degré, l'angle que l'on va rajouter à sa position actuelle.
 
-**Example de fonctionnement :**
+**Exemple de fonctionnement :**
 
 | Commandes consécutives | Position |
 | ---------------------- | :------: |
@@ -79,12 +78,21 @@ Le numéro représente, en degré, l'angle que l'on va rajouter à sa position a
 | MOVE15                 |    15    |
 | MOVE-45                |   -30    |
 
+## **Serveur Caméra / C**
 
-# **Axes d'amélioration**
+Ce serveur permet de prendre des photos grâce au module caméra Raspberry Pi. Par défaut, le serveur se lance et écoute le **port 8002**.
 
-- Lancer les serveurs au démarrage de la Raspberry
+La première chose que fait le serveur est de charger le module kernel **bcm2835-v4l2** via la commande **modprobe**.
 
-- Rajouter plus de commandes : EXIT, INIT, LOOP ...
+Ensuite, orsqu'un message **PHOTO** arrive sur la socket, une photo est prise, puis renvoyée au client Python. On envoie d'abord sa taille, puis l'image bit par bit.
+
+## **Axes d'amélioration**
+
+1. Nous aurions pu faire en sorte que les serveurs Camera et Servomoteur se lancent au démarrage de la Raspberry.
+
+2. Nous aurions pu rajouter plus de commandes, que ce soit pour le servomoteur ou pour la caméra (prise de plusieurs clichés par exemple pour la caméra, mouvement constant bouclé pour le servomoteur, ...)
+
+3. Eviter de coder en dur les ports des serveurs, et offrir la possibilité à l'utilisateur de le passer en paramètres.
 
 [schema_raspeberryPI3]:
 https://docs.microsoft.com/en-us/windows/iot-core/media/pinmappingsrpi/rp2_pinout.png
