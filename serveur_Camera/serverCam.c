@@ -27,6 +27,9 @@ int main(int argc , char *argv[])
     struct sockaddr_in server , client;
     char client_message[5 * sizeof(char)];
 
+    // First thing to do is to initialize the kernel module
+    system("modprobe bcm2835-v4l2");
+
     // signals handler
     struct sigaction action;
     action.sa_handler = signals_handler;
