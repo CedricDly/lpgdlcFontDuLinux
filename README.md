@@ -25,11 +25,24 @@ Répertoires :
   serveur caméra et le port du serveur servo-moteur. Suivez ensuite les instructions affichées dans
   votre console.
 
+## **Flashage de la carte / Compilation de v4lgrab**
+
+Le flashage de la carte a été réalisé en suivant l'ensemble des indications fournies dans le sujet. Nous n'avons pas jugé nécessaire de fournir les deux partitions dans ce répertoire Github.
+
+En ce qui concerne le binaire v4lgrab, il est déjà compilé et fourni dans le répertoire Serveur_Caméra. Pour la compilation de celui-ci, nous avons utilisé les lignes de commande suivantes, en ayant au préalable remplacé tous les appels à la fonction **malloc** par des appels à la fonction **calloc** :
+```./configure --host=arm-buildroot-linux-uclibcgnueabihf CC=/root/buildroot-precompiled-2017.08/output/host/bin/arm-linux-gcc```
+```make```
+```make install```
+
 ## **Client Python**
 
 Le client Python permet de prendre des photos ou d'actionner le servomoteur à distance. 
 
 Les paramètres à passer sont dans l'ordre : **l'ip de la Raspberry**, **le port du serveur camera** et **le port du serveur servomoteur**.
+
+Les différentes instructions vous sont ensuite proposées, elles sont à entrer directement dans la console. Toute commande différant des commandes autorisées ne sera pas traitée, et la réception d'un signal **SIGINT**, **SIGSTP**, **SIGQUIT** ou **SIGTERM** entrainera la fermeture du programme et des sockets associés.
+
+Attention : Comme la fermeture du client entraine la fermeture des sockets, vos devrez relancer les serveurs Caméra et Servomoteur pour utiliser à nouveau le client.
 
 ## **Serveur Servomoteur / Python**
 
