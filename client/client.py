@@ -40,7 +40,7 @@ class Client:
         self.__skCamera = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__skServo = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__skCamera.connect((self.__ip, self.__portCamera))
-        self.__skServo.connect((self.__ip, self.__portServo))
+        #self.__skServo.connect((self.__ip, self.__portServo))
         
 
         print("Connection successfully established with %s" %(self.__ip))
@@ -49,19 +49,20 @@ class Client:
         '''Send a request to capture a photo'''
         self.__skCamera.send(str.encode("PHOTO"))
         cpt = 0
+        size_img = 0
 
         #First thing to be received is the size of the picture
-        sizeB = self.__skCamera.recv(4)
+        sizeB = self.__skCamera.recv(4,socket.MSG_WAITALL)
         size_img = struct.unpack('<HH',sizeB)[0]
         filename = open('received_img.jpg', 'wb')
         
         while True:
             cpt = cpt + 1
-            strng = self.__skCamera.recv(1)
-            if (not strng or cpt >= size_img):
+            strng = self.__skCamera.recv(1,socket.MSG_WAITALL)
+            if (not strng or cpt > size_img):
                 break
             filename.write(strng)
-        
+
         filename.close()
         print('received !')
 
