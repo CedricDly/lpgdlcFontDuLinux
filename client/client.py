@@ -50,7 +50,7 @@ class Client:
         self.__skCamera.send(str.encode("PHOTO"))
         cpt = 0
 
-        #First thing to be received is the size of the picture (format -> Bytes // DOES NOT WORK ATM)
+        #First thing to be received is the size of the picture
         sizeB = self.__skCamera.recv(4)
         size_img = struct.unpack('<HH',sizeB)[0]
         filename = open('received_img.jpg', 'wb')
