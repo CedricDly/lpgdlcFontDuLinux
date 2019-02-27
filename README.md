@@ -6,18 +6,18 @@ Membres du projet : Paul BOUQUET - Cédric DELAUNAY - Thomas LE MASSON
 
 Répertoires :
 
-1. Client : contient le client python
+- Client : contient le client python
 
-2. Serveur_Caméra : contient le serveur Caméra et le binaire cross-compilé v4lgrab
+- Serveur_Caméra : contient le serveur Caméra et le binaire cross-compilé v4lgrab
 
-3. Serveur_Servo  : contient le serveur contrôlant le servo-moteur
+- Serveur_Servo  : contient le serveur contrôlant le servo-moteur
 
 ## **Démarrage rapide**
 
 - Pour le serveur caméra, les binaires sont déjà compilés. Vous pouvez donc transférer les deux
   exécutables sur la Raspberry, et lancer le serveur Caméra (par défaut, il est en écoute sur le
-  port 8002). Si vous voulez recompiler le serveur caméra, il vous suffit de copier le dossier
-  ServeurCamera/ dans le docker contenant le cross-compilateur, et d'utiliser le Makefile.
+  port 8008). Si vous voulez recompiler le serveur caméra, il vous suffit de copier le dossier
+  ServeurCamera/ dans le docker contenant le cross-compilateur, et d'utiliser le Makefile. Le binaire s'appelle alors servCam.
 
 - Pour le serveur servo-moteur, copiez le dossier sur la Raspberry, et exécutez
 
