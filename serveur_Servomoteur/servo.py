@@ -55,7 +55,7 @@ def changeCycle(command):
 		- MOVE{Angle} (Angle can be negative).
 	"""
 	# Searching for the pattern in the command string
-	match = re.match(PATTERN_MOVE, command).group(1)
+	match = re.match(PATTERN_MOVE, command)
 
 	# If something is found, run the command
 	if match:
