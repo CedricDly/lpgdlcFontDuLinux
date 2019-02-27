@@ -19,7 +19,7 @@ Répertoires :
   port 8008). Si vous voulez recompiler le serveur caméra, il vous suffit de copier le dossier
   ServeurCamera/ dans le docker contenant le cross-compilateur, et d'utiliser le Makefile. Le binaire s'appelle alors servCam.
 
-- Pour le serveur servo-moteur, copiez le dossier sur la Raspberry, et exécutez
+- Pour le serveur servo-moteur, copiez le dossier sur la Raspberry, et exécutez le script `server.py` avec python2. Le serveur se lance sur le port 6667 et se connecte sur la pin 11 de la raspberry.
 
 - Pour le client python, lancez le simplement avec en paramètres l'ip de la raspberry, le port du
   serveur caméra et le port du serveur servo-moteur. Suivez ensuite les instructions affichées dans

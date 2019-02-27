@@ -44,7 +44,7 @@ time.sleep(DELAY)
 
 def angle2perc(angle):
 	"""
-	Return the percentage of the duty cycle corresponding to the required angle.
+	Return the percentage of the duty cycle corresponding to the corresponding angle.
 	"""
 	return ((MAXI - MINI) / 90) * angle + INIT
 
