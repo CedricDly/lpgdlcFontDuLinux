@@ -1,6 +1,6 @@
 # **lpgdlcFontDuLinux**
 
-Membres du projet : Paul BOUQUET - Cédric DELAUNAY - Thomas LE MASSON
+Membres du projet : Les p'tits gars d'la côte Paul BOUQUET, Cédric DELAUNAY et Thomas LE MASSON
 
 ## **Projet de Linux embarqué : contrôle d'un serveur Caméra et d'un serveur Servomoteur depuis un client déporté**
 
@@ -97,15 +97,17 @@ Ce serveur permet de prendre des photos grâce au module caméra Raspberry Pi. P
 
 La première chose que fait le serveur est de charger le module kernel **bcm2835-v4l2** via la commande **modprobe**.
 
-Ensuite, orsqu'un message **PHOTO** arrive sur la socket, une photo est prise, puis renvoyée au client Python. On envoie d'abord sa taille, puis l'image bit par bit.
+Ensuite, lorsqu'un message **PHOTO** arrive sur la socket, une photo est prise, puis renvoyée au client Python. On envoie d'abord sa taille, puis l'image bit par bit. Une fois l'opération terminée, l'image est supprimée de la Raspberry, et on se met en attente d'une nouvelle commande.
 
 ## **Axes d'amélioration**
 
-1. Nous aurions pu faire en sorte que les serveurs Camera et Servomoteur se lancent au démarrage de la Raspberry.
+- Nous aurions pu faire en sorte que les serveurs Camera et Servomoteur se lancent au démarrage de la Raspberry.
 
-2. Nous aurions pu rajouter plus de commandes, que ce soit pour le servomoteur ou pour la caméra (prise de plusieurs clichés par exemple pour la caméra, mouvement constant bouclé pour le servomoteur, ...)
+- Nous aurions pu rajouter plus de commandes, que ce soit pour le servomoteur ou pour la caméra (prise de plusieurs clichés par exemple pour la caméra, mouvement constant bouclé pour le servomoteur, ...)
 
-3. Eviter de coder en dur les ports des serveurs, et offrir la possibilité à l'utilisateur de le passer en paramètres.
+- Eviter de coder en dur les ports des serveurs, et offrir la possibilité à l'utilisateur de le passer en paramètres.
+
+- Automatiser la routine de copie des fichiers server du PC vers la Raspberry au moyen de scripts bash.
 
 [schema_raspeberryPI3]:
 https://docs.microsoft.com/en-us/windows/iot-core/media/pinmappingsrpi/rp2_pinout.png
