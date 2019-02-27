@@ -93,7 +93,7 @@ Le numéro représente, en degré, l'angle que l'on va rajouter à sa position a
 
 ## **Serveur Caméra / C**
 
-Ce serveur permet de prendre des photos grâce au module caméra Raspberry Pi. Par défaut, le serveur se lance et écoute le **port 8002**.
+Ce serveur permet de prendre des photos grâce au module caméra Raspberry Pi. Par défaut, le serveur se lance et écoute le **port 8008**.
 
 La première chose que fait le serveur est de charger le module kernel **bcm2835-v4l2** via la commande **modprobe**.
 
