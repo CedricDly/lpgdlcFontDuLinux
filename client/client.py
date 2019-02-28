@@ -40,7 +40,7 @@ class Client:
         self.__skCamera = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__skServo = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__skCamera.connect((self.__ip, self.__portCamera))
-        #self.__skServo.connect((self.__ip, self.__portServo))
+        self.__skServo.connect((self.__ip, self.__portServo))
         
 
         print("Connection successfully established with %s" %(self.__ip))
@@ -106,29 +106,38 @@ if(__name__=="__main__"):
             client.conToRaspberry()
 
             print("Commandes disponibles :\n")
-            print("HELP --> aide")
-            print("PHOTO --> prendre une photo")
-            print("MOVE --> suivi du nombre de degrés, déclenche la rotation du servo")
+            print("HELP     --> aide")
+            print("PHOTO    --> prendre une photo")
+            print("MOVE     --> suivi du nombre de degrés, déclenche la rotation du servo")
+            print("EXIT     --> sortie du client")
 
             while(1):
 
                 for line in sys.stdin:
                     line = line.rstrip('\n')
                     if(line == "HELP"):
-                        print("HELP --> aide")
-                        print("PHOTO --> prendre une photo")
-                        print("MOVE --> suivi du nombre de degrés (sans espace), déclenche la rotation du servo")
+                        print("HELP     --> aide")
+                        print("PHOTO    --> prendre une photo")
+                        print("MOVE     --> suivi du nombre de degrés (sans espace), déclenche la rotation du servo")
+                        print("EXIT     --> sortie du client")
                     elif(line=="PHOTO"):
                         client.prendrePhoto()
                     elif(line[0:4]=="MOVE"):
                         angle = line[4:]
                         try:
                             iAngle = int(angle)
-                            if(iAngle > 180 or iAngle < -180):
+                            if(iAngle > 91 or iAngle < -91):
                                 print("Error : La valeur d'angle doit être comprise entre -90° et 90°")
                             else:
                                 client.bougerServo(iAngle)
                         except ValueError:
                             print("Error : la valeur d'angle est incorrecte")
+                    elif(line=="EXIT"):
+                        client.getSkCamera.close() #closing the Camera Socket
+                        client.getSkServo.close()  #closing the Servo Socket
+                        print("\nFermeture des sockets, sortie du programme !")
+                        sys.exit(1)
+                    else:
+                        print("la commande entrée n'est pas dans la liste des commandes proposées")
 
         

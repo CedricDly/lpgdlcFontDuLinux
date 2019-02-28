@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-import signal, socket, servo
+import signal, socket, servo, sys
 
 # Constants
 BUFFER_SIZE = 128
-PORT 		= 6667
+PORT 		= 8009
 
 def closeSocket(signum, stackframe):
 	"""
@@ -16,7 +16,6 @@ def closeSocket(signum, stackframe):
 if __name__ == "__main__":
 	# Creating the socket
 	socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
 	# Binding the socket
 	socket.bind(('', PORT))
 
@@ -49,12 +48,11 @@ if __name__ == "__main__":
 		if data_string:
 			try:
 				servo.changeCycle(data_string)
-			
+	
 			except servo.InvalidServoCommand as invalid:
 				# Printing the error message.
 				# The loop is not broken by invalid commands.
 				print invalid.message
-		
 		# If no command, exit
 		elif not data_string:
 			print "NO COMMAND"
@@ -62,5 +60,5 @@ if __name__ == "__main__":
 
 	# Stops the server correctly
 	print "Closing ..."
-	closeSocket(client, socket, servo)
+	closeSocket(client, socket)
 	print "Closed"
