@@ -5,7 +5,7 @@ import signal, socket, servo
 BUFFER_SIZE = 128
 PORT 		= 6667
 
-def closeSocket(signum, stackframe, client, socket):
+def closeSocket(signum, stackframe):
 	"""
 	Closing the server
 	"""
@@ -29,16 +29,16 @@ if __name__ == "__main__":
 
 	# Handling the signals
 	# Ctrl + c
-	signal.signal(signal.SIGINT, closeSocket, client, socket)
+	signal.signal(signal.SIGINT, closeSocket)
 	
 	# Ctrl + \
-	signal.signal(signal.SIGQUIT, closeSocket, client, socket)
+	signal.signal(signal.SIGQUIT, closeSocket)
 	
 	# Ctrl + z
-	signal.signal(signal.SIGTSTP, closeSocket, client, socket)
+	signal.signal(signal.SIGTSTP, closeSocket)
 
 	# Sent in the command line (ex : killall python)
-	signal.signal(signal.SIGTERM, closeSocket, client, socket)
+	signal.signal(signal.SIGTERM, closeSocket)
 
 	while True:
 		# Receiving data of maximum size of BUFFER_SIZE
@@ -50,7 +50,7 @@ if __name__ == "__main__":
 			try:
 				servo.changeCycle(data_string)
 			
-			except InvalidServoCommand as invalid:
+			except servo.InvalidServoCommand as invalid:
 				# Printing the error message.
 				# The loop is not broken by invalid commands.
 				print invalid.message
