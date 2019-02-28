@@ -16,10 +16,10 @@ Répertoires :
 
 - Pour le serveur caméra, les binaires sont déjà compilés. Vous pouvez donc transférer les deux
   exécutables sur la Raspberry, et lancer le serveur Caméra (par défaut, il est en écoute sur le
-  port 8008). Si vous voulez recompiler le serveur caméra, il vous suffit de copier le dossier
-  ServeurCamera/ dans le docker contenant le cross-compilateur, et d'utiliser le Makefile. Le binaire s'appelle alors servCam.
+  port **8008**). Si vous voulez recompiler le serveur caméra, il vous suffit de copier le dossier
+  ServeurCamera/ dans le docker contenant le cross-compilateur, et d'utiliser le Makefile. Le binaire s'appelle alors `servCam`.
 
-- Pour le serveur servo-moteur, copiez le dossier sur la Raspberry, et exécutez le script `server.py` avec python2. Le serveur se lance sur le port 6667 et se connecte sur la pin 11 de la raspberry.
+- Pour le serveur servo-moteur, copiez le dossier sur la Raspberry, et exécutez le script `server.py` avec python2. Le serveur se lance sur le port **8009** et se connecte sur la pin 11 de la raspberry.
 
 - Pour le client python, lancez le simplement avec en paramètres l'ip de la raspberry, le port du
   serveur caméra et le port du serveur servo-moteur. Suivez ensuite les instructions affichées dans
@@ -29,7 +29,7 @@ Répertoires :
 
 Le flashage de la carte a été réalisé en suivant l'ensemble des indications fournies dans le sujet. Nous n'avons pas jugé nécessaire de fournir les deux partitions dans ce répertoire Github.
 
-En ce qui concerne le binaire v4lgrab, il est déjà compilé et fourni dans le répertoire Serveur_Caméra. Pour la compilation de celui-ci, nous avons utilisé les lignes de commande suivantes, en ayant au préalable remplacé tous les appels à la fonction **malloc** par des appels à la fonction **calloc** :
+En ce qui concerne le binaire v4lgrab, il est déjà compilé et fourni dans le répertoire Serveur_Caméra. Pour la compilation de celui-ci, nous avons utilisé les lignes de commande suivantes, en ayant au préalable remplacé tous les appels à la fonction **malloc** par des appels à la fonction **calloc** dans la librairie v4l:
 ```./configure --host=arm-buildroot-linux-uclibcgnueabihf CC=/root/buildroot-precompiled-2017.08/output/host/bin/arm-linux-gcc```
 ```make```
 ```make install```
@@ -52,7 +52,7 @@ Le serveur n'accepte qu'**une seule connection** jusqu'à la fin de son exécuti
 
 On peut lancer le serveur sur le port et sur la pin de la raspeberry que l'on souhaite.
 
-Par défaut, le serveur se lance sur le **port 6667** et la **pin 11** de la raspberry. [plan
+Par défaut, le serveur se lance sur le **port 8009** et la **pin 11** de la raspberry. [plan
 raspberry](schema_raspeberryPI3)
 
 Les commandes reçues par le serveur sont ensuite envoyées et traitées par le servomoteur.
